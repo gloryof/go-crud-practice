@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"github.com/gloryof/go-crud-practice/handlers"
+	"github.com/gloryof/go-crud-practice/context/user/web"
 )
 
 func main() {
