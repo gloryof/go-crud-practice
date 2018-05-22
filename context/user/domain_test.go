@@ -8,31 +8,33 @@ import (
 	"github.com/gloryof/go-crud-practice/context/base"
 )
 
-func TestNewUser(t *testing.T) {
+func TestExistsUser(t *testing.T) {
 
-	expectedID := ID{value: 1234}
+	var idValue uint64 = 1234
+	expectedID := ID{numbered: true, value: idValue}
 	expectedName := Name{value: "Test1"}
 
 	loc, _ := time.LoadLocation("Asia/Tokyo")
 	expectedBirthDay := BirthDay{value: time.Date(2018, 05, 01, 0, 0, 0, 0, loc)}
 
-	sut := NewUser(expectedID, expectedName, expectedBirthDay)
+	sut := ExistsUser(idValue, expectedName, expectedBirthDay)
 
 	if !reflect.DeepEqual(sut.GetID(), expectedID) {
-		t.Errorf("Convert() got = %v, want %v", sut.GetID(), expectedID)
+		t.Errorf("ExistsUser() got = %v, want %v", sut.GetID(), expectedID)
 	}
 
 	if !reflect.DeepEqual(sut.GetName(), expectedName) {
-		t.Errorf("Convert() got = %v, want %v", sut.GetName(), expectedName)
+		t.Errorf("ExistsUser() got = %v, want %v", sut.GetName(), expectedName)
 	}
 
 	if !reflect.DeepEqual(sut.GetBirthDay(), expectedBirthDay) {
-		t.Errorf("Convert() got = %v, want %v", sut.GetBirthDay(), expectedBirthDay)
+		t.Errorf("ExistsUser() got = %v, want %v", sut.GetBirthDay(), expectedBirthDay)
 	}
 }
 
-func TestConvert(t *testing.T) {
+func TestNewUser(t *testing.T) {
 	loc, _ := time.LoadLocation("Asia/Tokyo")
+	notNumberedID := ID{numbered: false, value: 0}
 	type args struct {
 		name     string
 		birthDay string
@@ -46,17 +48,29 @@ func TestConvert(t *testing.T) {
 		{
 			name: "正常パターン",
 			args: args{"テスト", "2018-05-01"},
-			want: User{name: Name{"テスト"}, birthDay: BirthDay{time.Date(2018, 05, 01, 0, 0, 0, 0, loc)}},
+			want: User{
+				id:       notNumberedID,
+				name:     Name{value: "テスト"},
+				birthDay: BirthDay{value: time.Date(2018, 05, 01, 0, 0, 0, 0, loc)},
+			},
 		},
 		{
 			name: "正常パターン（閏年）",
 			args: args{"テスト", "2016-02-29"},
-			want: User{name: Name{"テスト"}, birthDay: BirthDay{time.Date(2016, 02, 29, 0, 0, 0, 0, loc)}},
+			want: User{
+				id:       notNumberedID,
+				name:     Name{value: "テスト"},
+				birthDay: BirthDay{value: time.Date(2016, 02, 29, 0, 0, 0, 0, loc)},
+			},
 		},
 		{
 			name: "正常パターン（400年ごとの閏年）",
 			args: args{"テスト", "2000-02-29"},
-			want: User{name: Name{"テスト"}, birthDay: BirthDay{time.Date(2000, 02, 29, 0, 0, 0, 0, loc)}},
+			want: User{
+				id:       notNumberedID,
+				name:     Name{value: "テスト"},
+				birthDay: BirthDay{value: time.Date(2000, 02, 29, 0, 0, 0, 0, loc)},
+			},
 		},
 		{
 			name:  "名前が未入力",
@@ -139,12 +153,12 @@ func TestConvert(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, got1 := Convert(tt.args.name, tt.args.birthDay)
+			got, got1 := NewUser(tt.args.name, tt.args.birthDay)
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Convert() got = %v, want %v", got, tt.want)
+				t.Errorf("NewUser() got = %v, want %v", got, tt.want)
 			}
 			if !reflect.DeepEqual(got1, tt.want1) {
-				t.Errorf("Convert() got1 = %v, want %v", got1, tt.want1)
+				t.Errorf("NewUser() got1 = %v, want %v", got1, tt.want1)
 			}
 		})
 	}

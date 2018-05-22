@@ -13,9 +13,19 @@ type User struct {
 	birthDay BirthDay
 }
 
-// NewUser 新しいユーザを作成する
-func NewUser(id ID, name Name, birthDay BirthDay) User {
-	return User{id, name, birthDay}
+// ExistsUser 既存のユーザを作成する
+func ExistsUser(id uint64, name Name, birthDay BirthDay) User {
+	return User{
+		id:       ID{numbered: true, value: id},
+		name:     name,
+		birthDay: birthDay,
+	}
+}
+
+// IsExists 既存のユーザかどうかを判定する
+// 既存ユーザの場合：true、既存ユーザではない場合：false
+func (u *User) IsExists() bool {
+	return u.id.numbered
 }
 
 // GetID ユーザIDを取得する
@@ -29,7 +39,8 @@ func (u *User) GetBirthDay() BirthDay { return u.birthDay }
 
 // ID ユーザを一意に特定するためのID
 type ID struct {
-	value uint64
+	numbered bool
+	value    uint64
 }
 
 // GetValue ユーザIDの値を取得する
@@ -69,8 +80,10 @@ type Repository interface {
 	Delete(id ID)
 }
 
-// Convert ユーザに変換する
-func Convert(name string, birthDay string) (User, *base.ValidationResults) {
+// NewUser 新しいユーザを作成する
+// ユーザに対する入力値を満たしている場合はUserを返す。
+// 入力値を満たしていない場合はbase.ValidationResultsを返す
+func NewUser(name string, birthDay string) (User, *base.ValidationResults) {
 
 	r := base.NewValidationResults()
 
