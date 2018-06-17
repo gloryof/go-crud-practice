@@ -2,6 +2,7 @@ package base
 
 import (
 	"fmt"
+	"strings"
 )
 
 const (
@@ -9,6 +10,8 @@ const (
 	required MessagePattern = iota
 	// dateFormat 日付形式メッセージのパターン
 	dateFormat
+	// dataNotExists データが存在しないメッセージのパターン
+	dataNotExists
 )
 
 // MessagePattern メッセージパターン
@@ -21,6 +24,8 @@ func (p MessagePattern) String() string {
 		return "%sを入力してください"
 	case dateFormat:
 		return "%sは日付形式で入力してください"
+	case dataNotExists:
+		return "%sが存在しません。"
 	default:
 		return "入力値が不正です"
 	}
@@ -34,6 +39,11 @@ type ValidationResults struct {
 // NewValidationResults 新しい入力検証結果を作成する
 func NewValidationResults() ValidationResults {
 	return ValidationResults{results: []string{}}
+}
+
+// Error errorの実装関数
+func (r *ValidationResults) Error() string {
+	return strings.Join(r.results, ";")
 }
 
 // GetResults 結果のリストを取得する
@@ -54,24 +64,22 @@ func (r *ValidationResults) AddDateFormatError(items string) {
 	r.results = append(r.results, fmt.Sprintf(fmt.Sprint(dateFormat), items))
 }
 
-// Merge 全ての入力エラーを繋げる
+// AddDataNotExistsError データが存在しないエラーを追加する
+func (r *ValidationResults) AddDataNotExistsError(items string) {
+
+	r.results = append(r.results, fmt.Sprintf(fmt.Sprint(dataNotExists), items))
+}
+
+// Add パラメータで渡された入力エラーを追加する
 // 同じエラーがあった場合は一つにまとめられる
-func Merge(results ...ValidationResults) ValidationResults {
+func (r *ValidationResults) Add(results ValidationResults) {
 
-	messages := []string{}
+	for _, rs := range results.results {
 
-	for _, r := range results {
-
-		for _, v := range r.GetResults() {
-
-			if contains(messages, v) == false {
-
-				messages = append(messages, v)
-			}
+		if contains(r.results, rs) == false {
+			r.results = append(r.results, rs)
 		}
 	}
-
-	return ValidationResults{results: messages}
 }
 
 // contains 対象の値が存在しているかを判定する

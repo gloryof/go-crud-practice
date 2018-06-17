@@ -59,7 +59,7 @@ func TestValidationResults(t *testing.T) {
 	}
 }
 
-func TestMerge(t *testing.T) {
+func TestAdd(t *testing.T) {
 
 	data1 := NewValidationResults()
 	data2 := NewValidationResults()
@@ -116,8 +116,12 @@ func TestMerge(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Merge(tt.args.results...); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Merge() = %v, want %v", got, tt.want)
+			r := NewValidationResults()
+			for _, a := range tt.args.results {
+				r.Add(a)
+			}
+			if !reflect.DeepEqual(r, tt.want) {
+				t.Errorf("Merge() = %v, want %v", r, tt.want)
 			}
 		})
 	}

@@ -2,8 +2,6 @@ package user
 
 import (
 	"time"
-
-	"github.com/gloryof/go-crud-practice/context/base"
 )
 
 // User ユーザを表すエンティティ
@@ -13,29 +11,20 @@ type User struct {
 	birthDay BirthDay
 }
 
-// ExistsUser 既存のユーザを作成する
-func ExistsUser(id uint64, name Name, birthDay BirthDay) User {
-	return User{
-		id:       ID{numbered: true, value: id},
-		name:     name,
-		birthDay: birthDay,
-	}
-}
-
 // IsExists 既存のユーザかどうかを判定する
 // 既存ユーザの場合：true、既存ユーザではない場合：false
-func (u *User) IsExists() bool {
+func (u User) IsExists() bool {
 	return u.id.numbered
 }
 
 // GetID ユーザIDを取得する
-func (u *User) GetID() ID { return u.id }
+func (u User) GetID() ID { return u.id }
 
 // GetName ユーザの名前を取得する
-func (u *User) GetName() Name { return u.name }
+func (u User) GetName() Name { return u.name }
 
 // GetBirthDay ユーザの誕生日を取得する
-func (u *User) GetBirthDay() BirthDay { return u.birthDay }
+func (u User) GetBirthDay() BirthDay { return u.birthDay }
 
 // ID ユーザを一意に特定するためのID
 type ID struct {
@@ -44,7 +33,7 @@ type ID struct {
 }
 
 // GetValue ユーザIDの値を取得する
-func (id *ID) GetValue() uint64 {
+func (id ID) GetValue() uint64 {
 	return id.value
 }
 
@@ -54,7 +43,7 @@ type Name struct {
 }
 
 // GetValue ユーザ名の値を取得する
-func (n *Name) GetValue() string {
+func (n Name) GetValue() string {
 	return n.value
 }
 
@@ -64,88 +53,23 @@ type BirthDay struct {
 }
 
 // GetValue 誕生日の値を取得する
-func (b *BirthDay) GetValue() time.Time {
+func (b BirthDay) GetValue() time.Time {
 	return b.value
 }
 
 // Repository ユーザリポジトリ
 type Repository interface {
 	// FindById IDをキーにユーザを探す
-	FindById(id ID) User
+	// ユーザが存在する場合はUserを返す
+	// ユーザが存在しない場合はエラーを返す
+	FindById(id ID) (User, error)
 
 	// Save ユーザの保存を行う
-	Save(user User)
+	// 保存されたIDを返す
+	// 保存処理に失敗した場合はエラーを返す
+	Save(user User) (ID, error)
 
-	// Delete ユーザの削除を行う
-	Delete(id ID)
-}
-
-// NewUser 新しいユーザを作成する
-// ユーザに対する入力値を満たしている場合はUserを返す。
-// 入力値を満たしていない場合はbase.ValidationResultsを返す
-func NewUser(name string, birthDay string) (User, *base.ValidationResults) {
-
-	r := base.NewValidationResults()
-
-	n, nv := convertName(name)
-
-	if nv != nil {
-
-		r = base.Merge(r, *nv)
-	}
-
-	b, bv := convertBirthDay(birthDay)
-	if bv != nil {
-
-		r = base.Merge(r, *bv)
-	}
-
-	if r.HasError() {
-
-		return User{}, &r
-	}
-
-	return User{name: n, birthDay: b}, nil
-}
-
-// convertName 名前に変換する
-// 変換に成功した場合：Name、変換に失敗した場合:base.ValidationResults
-func convertName(name string) (Name, *base.ValidationResults) {
-
-	const itemName = "名前"
-	r := base.NewValidationResults()
-
-	if len(name) < 1 {
-
-		r.AddRequiredError(itemName)
-
-		return Name{}, &r
-	}
-
-	return Name{name}, nil
-}
-
-// convertBirthday 誕生日に変換する
-// 変換に成功した場合：BirthDay、変換に失敗した場合:base.ValidationResults
-func convertBirthDay(birthDay string) (BirthDay, *base.ValidationResults) {
-
-	const itemName = "誕生日"
-	r := base.NewValidationResults()
-
-	if len(birthDay) < 1 {
-
-		r.AddRequiredError(itemName)
-		return BirthDay{}, &r
-	}
-
-	loc, _ := time.LoadLocation("Asia/Tokyo")
-	b, br := time.ParseInLocation("2006-01-02", birthDay, loc)
-
-	if br != nil {
-
-		r.AddDateFormatError(itemName)
-		return BirthDay{}, &r
-	}
-
-	return BirthDay{value: b}, nil
+	// DeleteByID ユーザの削除を行う
+	// 削除処理に失敗した場合はエラーを返す
+	DeleteByID(id ID) error
 }
