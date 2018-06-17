@@ -1,13 +1,17 @@
 package user
 
+import (
+	"github.com/gloryof/go-crud-practice/context/user/domain"
+)
+
 // Usecase ユーザに関するユースケース
 type Usecase struct {
 	// repository ユーザリポジトリ
-	repository Repository
+	repository user.Repository
 }
 
 // New ユースケースを作成する
-func New(repository Repository) Usecase {
+func New(repository user.Repository) Usecase {
 	return Usecase{repository}
 }
 
