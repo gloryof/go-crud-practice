@@ -27,4 +27,4 @@
 
 vendor
 
-.vscode/launch.json
+.vscode/*
