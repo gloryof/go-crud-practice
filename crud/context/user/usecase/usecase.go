@@ -1,17 +1,17 @@
 package user
 
 import (
-	"github.com/gloryof/go-crud-practice/context/user/domain"
+	"github.com/gloryof/go-crud-practice/crud/context/user/domain"
 )
 
 // Usecase ユーザに関するユースケース
 type Usecase struct {
 	// repository ユーザリポジトリ
-	repository user.Repository
+	repository domain.Repository
 }
 
 // New ユースケースを作成する
-func New(repository user.Repository) Usecase {
+func New(repository domain.Repository) Usecase {
 	return Usecase{repository}
 }
 
@@ -24,9 +24,9 @@ type ModifyUserParam struct {
 // Register 登録処理
 // 登録に成功した場合はIDを返す。
 // 登録に失敗した場合はerrorを返す
-func (u Usecase) Register(param ModifyUserParam) (ID, error) {
+func (u Usecase) Register(param ModifyUserParam) (domain.ID, error) {
 
-	sp := RegisterSpec{
+	sp := domain.RegisterSpec{
 		Name:     param.Name,
 		BirthDay: param.BirthDay,
 	}
@@ -34,7 +34,7 @@ func (u Usecase) Register(param ModifyUserParam) (ID, error) {
 
 	if ve != nil {
 
-		return ID{}, ve
+		return domain.ID{}, ve
 	}
 
 	return u.repository.Save(us)
@@ -44,7 +44,7 @@ func (u Usecase) Register(param ModifyUserParam) (ID, error) {
 // 更新に失敗した場合はerrorを返す
 func (u Usecase) Update(id uint64, param ModifyUserParam) error {
 
-	sp := UpdateSpec{
+	sp := domain.UpdateSpec{
 		ID:         id,
 		Name:       param.Name,
 		BirthDay:   param.BirthDay,
@@ -60,14 +60,14 @@ func (u Usecase) Update(id uint64, param ModifyUserParam) error {
 
 // FindByID ユーザIDでユーザを検索する
 // ユーザが存在しない場合はエラーを返す
-func (u Usecase) FindByID(id uint64) (User, error) {
+func (u Usecase) FindByID(id uint64) (domain.User, error) {
 
-	return u.repository.FindById(ID{value: id})
+	return u.repository.FindByID(domain.NewID(id))
 }
 
 // DeleteByID ユーザIDに紐づくユーザを削除する
 // 削除に失敗した場合はerrorを返す
 func (u Usecase) DeleteByID(id uint64) error {
 
-	return u.repository.DeleteByID(ID{value: id})
+	return u.repository.DeleteByID(domain.NewID(id))
 }

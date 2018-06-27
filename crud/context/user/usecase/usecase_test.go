@@ -5,6 +5,8 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/gloryof/go-crud-practice/crud/context/user/domain"
+	"github.com/gloryof/go-crud-practice/tool/test/context/user/domain/mock"
 	"github.com/golang/mock/gomock"
 )
 
@@ -17,24 +19,21 @@ func TestUsecase_Register(t *testing.T) {
 	}
 	tests := []struct {
 		name       string
-		repository Repository
+		repository domain.Repository
 		args       args
-		want       ID
+		want       domain.ID
 		wantErr    bool
 	}{
 		{
 			name: "正常系",
 			repository: createSaveMock(mockCtrl,
-				User{
-					name:     Name{"Junki"},
-					birthDay: BirthDay{createDateTime("1986-12-16")},
-				},
-				createUserID(),
+				createTestNewUser("Junki", "1986-12-16"),
+				domain.NewID(1000),
 			),
 			args: args{
 				param: ModifyUserParam{Name: "Junki", BirthDay: "1986-12-16"},
 			},
-			want:    ID{value: 1000, numbered: true},
+			want:    domain.NewID(1000),
 			wantErr: false,
 		},
 		{
@@ -42,7 +41,7 @@ func TestUsecase_Register(t *testing.T) {
 			args: args{
 				param: ModifyUserParam{Name: "", BirthDay: "1986-12-16"},
 			},
-			want:    ID{},
+			want:    domain.ID{},
 			wantErr: true,
 		},
 		{
@@ -51,7 +50,7 @@ func TestUsecase_Register(t *testing.T) {
 			args: args{
 				param: ModifyUserParam{Name: "Yamada", BirthDay: "1986-12-16"},
 			},
-			want:    ID{},
+			want:    domain.ID{},
 			wantErr: true,
 		},
 	}
@@ -82,23 +81,15 @@ func TestUsecase_Update(t *testing.T) {
 	}
 	tests := []struct {
 		name       string
-		repository Repository
+		repository domain.Repository
 		args       args
 		wantErr    bool
 	}{
 		{
 			name: "正常系",
 			repository: createUpdateMock(mockCtrl,
-				User{
-					id:       createUserID(),
-					name:     Name{"Before"},
-					birthDay: BirthDay{createDateTime("1982-01-01")},
-				},
-				User{
-					id:       createUserID(),
-					name:     Name{"Junki"},
-					birthDay: BirthDay{createDateTime("1986-12-16")},
-				},
+				createTestExistUser(1000, "Before", "1982-01-01"),
+				createTestExistUser(1000, "Junki", "1986-12-16"),
 			),
 			args: args{
 				id:    1000,
@@ -124,14 +115,10 @@ func TestUsecase_FindByID(t *testing.T) {
 	defer mockCtrl.Finish()
 
 	var idv uint64 = 1000
-	eu := User{
-		id:       ID{value: idv, numbered: true},
-		name:     Name{value: "テスト"},
-		birthDay: BirthDay{value: createDateTime("1986-12-16")},
-	}
+	eu := createTestExistUser(1000, "テスト", "1986-12-16")
 
 	type fields struct {
-		repository Repository
+		repository domain.Repository
 	}
 	type args struct {
 		id uint64
@@ -140,7 +127,7 @@ func TestUsecase_FindByID(t *testing.T) {
 		name    string
 		fields  fields
 		args    args
-		want    User
+		want    domain.User
 		wantErr bool
 	}{
 		{
@@ -158,7 +145,7 @@ func TestUsecase_FindByID(t *testing.T) {
 				repository: createFindErrorMock(mockCtrl, idv),
 			},
 			args:    args{id: idv},
-			want:    User{},
+			want:    domain.User{},
 			wantErr: true,
 		},
 	}
@@ -184,7 +171,7 @@ func TestUsecase_DeleteByID(t *testing.T) {
 	defer mockCtrl.Finish()
 
 	type fields struct {
-		repository Repository
+		repository domain.Repository
 	}
 	type args struct {
 		id uint64
@@ -228,74 +215,89 @@ func TestUsecase_DeleteByID(t *testing.T) {
 	}
 }
 
-func createUserID() ID {
-	return ID{value: 1000, numbered: true}
-}
+func createSaveMock(mockCtrl *gomock.Controller, nu domain.User, id domain.ID) *domain_mock.MockRepository {
 
-func createSaveMock(mockCtrl *gomock.Controller, nu User, id ID) *MockRepository {
-
-	mr := NewMockRepository(mockCtrl)
+	mr := domain_mock.NewMockRepository(mockCtrl)
 
 	mr.EXPECT().Save(nu).Return(id, nil)
 
 	return mr
 }
 
-func createSaveErrorMock(mockCtrl *gomock.Controller) *MockRepository {
+func createSaveErrorMock(mockCtrl *gomock.Controller) *domain_mock.MockRepository {
 
-	mr := NewMockRepository(mockCtrl)
+	mr := domain_mock.NewMockRepository(mockCtrl)
 
-	eu := User{
-		name:     Name{value: "Yamada"},
-		birthDay: BirthDay{value: createDateTime("1986-12-16")},
-	}
-	mr.EXPECT().Save(eu).Return(ID{}, errors.New("test"))
+	eu := createTestNewUser("Yamada", "1986-12-16")
+
+	mr.EXPECT().Save(eu).Return(domain.ID{}, errors.New("test"))
 
 	return mr
 }
 
-func createUpdateMock(mockCtrl *gomock.Controller, base User, updated User) *MockRepository {
+func createUpdateMock(mockCtrl *gomock.Controller, base domain.User, updated domain.User) *domain_mock.MockRepository {
 
-	mr := NewMockRepository(mockCtrl)
+	mr := domain_mock.NewMockRepository(mockCtrl)
+	id := domain.NewID(1000)
 
-	mr.EXPECT().FindById(ID{value: base.id.GetValue()}).Return(base, nil)
-	mr.EXPECT().Save(updated).Return(updated.id, nil)
-
-	return mr
-}
-
-func createFindMock(mockCtrl *gomock.Controller, id uint64, base User) *MockRepository {
-
-	mr := NewMockRepository(mockCtrl)
-
-	mr.EXPECT().FindById(ID{value: id}).Return(base, nil)
+	mr.EXPECT().FindByID(id).Return(base, nil)
+	mr.EXPECT().Save(updated).Return(updated.GetID(), nil)
 
 	return mr
 }
 
-func createFindErrorMock(mockCtrl *gomock.Controller, id uint64) *MockRepository {
+func createFindMock(mockCtrl *gomock.Controller, id uint64, base domain.User) *domain_mock.MockRepository {
 
-	mr := NewMockRepository(mockCtrl)
+	mr := domain_mock.NewMockRepository(mockCtrl)
+	uid := domain.NewID(1000)
 
-	mr.EXPECT().FindById(ID{value: id}).Return(User{}, errors.New("Test"))
-
-	return mr
-}
-
-func createDeleteMock(mockCtrl *gomock.Controller, id uint64) *MockRepository {
-
-	mr := NewMockRepository(mockCtrl)
-
-	mr.EXPECT().DeleteByID(ID{value: id}).Return(nil)
+	mr.EXPECT().FindByID(uid).Return(base, nil)
 
 	return mr
 }
 
-func createDeleteErrorMock(mockCtrl *gomock.Controller, id uint64) *MockRepository {
+func createFindErrorMock(mockCtrl *gomock.Controller, id uint64) *domain_mock.MockRepository {
 
-	mr := NewMockRepository(mockCtrl)
+	mr := domain_mock.NewMockRepository(mockCtrl)
+	uid := domain.NewID(1000)
 
-	mr.EXPECT().DeleteByID(ID{value: id}).Return(errors.New("Test"))
+	mr.EXPECT().FindByID(uid).Return(domain.User{}, errors.New("Test"))
 
 	return mr
+}
+
+func createDeleteMock(mockCtrl *gomock.Controller, id uint64) *domain_mock.MockRepository {
+
+	mr := domain_mock.NewMockRepository(mockCtrl)
+	uid := domain.NewID(1000)
+
+	mr.EXPECT().DeleteByID(uid).Return(nil)
+
+	return mr
+}
+
+func createDeleteErrorMock(mockCtrl *gomock.Controller, id uint64) *domain_mock.MockRepository {
+
+	mr := domain_mock.NewMockRepository(mockCtrl)
+	uid := domain.NewID(1000)
+
+	mr.EXPECT().DeleteByID(uid).Return(errors.New("Test"))
+
+	return mr
+}
+
+func createTestNewUser(name string, birthDay string) domain.User {
+
+	nv, _ := domain.NewName(name)
+	bv, _ := domain.NewBirthDay(birthDay)
+
+	return domain.NewUser(domain.ID{}, nv, bv)
+}
+
+func createTestExistUser(id uint64, name string, birthDay string) domain.User {
+
+	nv, _ := domain.NewName(name)
+	bv, _ := domain.NewBirthDay(birthDay)
+
+	return domain.CreateExistUser(domain.NewID(id), nv, bv)
 }

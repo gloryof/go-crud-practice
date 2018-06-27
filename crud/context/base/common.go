@@ -3,11 +3,14 @@ package base
 import (
 	"fmt"
 	"strings"
+	"time"
 )
 
 const (
 	// required 必須メッセージのパターン
 	required MessagePattern = iota
+	// maxLength 最大文字数メッセージのパターン
+	maxLength
 	// dateFormat 日付形式メッセージのパターン
 	dateFormat
 	// dataNotExists データが存在しないメッセージのパターン
@@ -22,6 +25,8 @@ func (p MessagePattern) String() string {
 	switch p {
 	case required:
 		return "%sを入力してください"
+	case maxLength:
+		return "%sは%d文字以内で入力してください"
 	case dateFormat:
 		return "%sは日付形式で入力してください"
 	case dataNotExists:
@@ -56,6 +61,12 @@ func (r *ValidationResults) HasError() bool { return len(r.results) > 0 }
 func (r *ValidationResults) AddRequiredError(items string) {
 
 	r.results = append(r.results, fmt.Sprintf(fmt.Sprint(required), items))
+}
+
+// AddMaxLengthError 最大文字数エラーを追加する
+func (r *ValidationResults) AddMaxLengthError(items string, length uint64) {
+
+	r.results = append(r.results, fmt.Sprintf(fmt.Sprint(maxLength), items, length))
 }
 
 // AddDateFormatError 日付形式エラーを追加する
@@ -95,4 +106,13 @@ func contains(messages []string, value string) bool {
 	}
 
 	return false
+}
+
+// ConvertDateTime 日付型に変換する
+// 日付の形式は「yyyy-MM-dd」形式の東京ロケール。
+// 変換に失敗した場合はerrorを返す
+func ConvertDateTime(value string) (time.Time, error) {
+
+	loc, _ := time.LoadLocation("Asia/Tokyo")
+	return time.ParseInLocation("2006-01-02", value, loc)
 }

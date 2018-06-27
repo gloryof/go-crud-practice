@@ -2,10 +2,10 @@ package domain
 
 // Repository ユーザリポジトリ
 type Repository interface {
-	// FindById IDをキーにユーザを探す
+	// FindByID IDをキーにユーザを探す
 	// ユーザが存在する場合はUserを返す
 	// ユーザが存在しない場合はエラーを返す
-	FindById(id ID) (User, error)
+	FindByID(id ID) (User, error)
 
 	// Save ユーザの保存を行う
 	// 保存されたIDを返す
