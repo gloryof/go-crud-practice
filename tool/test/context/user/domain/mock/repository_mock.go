@@ -5,10 +5,9 @@
 package domain_mock
 
 import (
-	reflect "reflect"
-
 	domain "github.com/gloryof/go-crud-practice/crud/context/user/domain"
 	gomock "github.com/golang/mock/gomock"
+	reflect "reflect"
 )
 
 // MockRepository is a mock of Repository interface
@@ -32,6 +31,19 @@ func NewMockRepository(ctrl *gomock.Controller) *MockRepository {
 // EXPECT returns an object that allows the caller to indicate expected use
 func (m *MockRepository) EXPECT() *MockRepositoryMockRecorder {
 	return m.recorder
+}
+
+// FindAll mocks base method
+func (m *MockRepository) FindAll() ([]domain.User, error) {
+	ret := m.ctrl.Call(m, "FindAll")
+	ret0, _ := ret[0].([]domain.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindAll indicates an expected call of FindAll
+func (mr *MockRepositoryMockRecorder) FindAll() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindAll", reflect.TypeOf((*MockRepository)(nil).FindAll))
 }
 
 // FindByID mocks base method

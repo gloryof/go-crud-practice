@@ -133,6 +133,12 @@ func NewBirthDay(value string) (BirthDay, *base.ValidationResults) {
 	return BirthDay{value: cv}, nil
 }
 
+// ToBirthDay 誕生日に変換する
+func ToBirthDay(value time.Time) BirthDay {
+
+	return BirthDay{value: value}
+}
+
 // GetValue 誕生日の値を取得する
 func (b BirthDay) GetValue() time.Time {
 	return b.value

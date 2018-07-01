@@ -2,6 +2,12 @@
 
 
 [[projects]]
+  name = "github.com/go-gorp/gorp"
+  packages = ["."]
+  revision = "6032c66e0f5f155fd56216ed14cbbdd991034605"
+  version = "v2.1"
+
+[[projects]]
   name = "github.com/golang/mock"
   packages = ["gomock"]
   revision = "c34cdb4725f4c3844d095133c6e40e448b86589b"
@@ -16,6 +22,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "28d88dc0c8aad1999abdb396fd9d68d2f04700373f4a338e4c4c22767f6f28cd"
+  inputs-digest = "d0383a65e559732537905602bdcaaf654f8b81e2ffa24917fbb4b773253cb5ce"
   solver-name = "gps-cdcl"
   solver-version = 1

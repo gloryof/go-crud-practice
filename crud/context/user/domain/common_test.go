@@ -6,6 +6,12 @@ type mockRepository struct {
 	users []User
 }
 
+// FindAll Repositoryの内部モック実装
+func (m mockRepository) FindAll() ([]User, error) {
+
+	return m.users, nil
+}
+
 // FindByID Repositoryの内部モック実装
 func (m mockRepository) FindByID(id ID) (User, error) {
 
