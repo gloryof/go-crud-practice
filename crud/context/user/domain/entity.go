@@ -15,7 +15,7 @@ type User struct {
 	name Name
 	// birthDay ユーザの誕生日
 	birthDay BirthDay
-	// registered 登録されたユーザ華道家のフラグ
+	// registered 登録されたユーザかどうかのフラグ
 	registered bool
 }
 

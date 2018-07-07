@@ -1,4 +1,4 @@
-package user
+package usecase
 
 import (
 	"errors"
@@ -56,16 +56,16 @@ func TestUsecase_Register(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			u := Usecase{
+			u := UserUsecase{
 				repository: tt.repository,
 			}
 			got, err := u.Register(tt.args.param)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Usecase.Register() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("UserUsecase.Register() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Usecase.Register() = %v, want %v", got, tt.want)
+				t.Errorf("UserUsecase.Register() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -100,11 +100,11 @@ func TestUsecase_Update(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			u := &Usecase{
+			u := &UserUsecase{
 				repository: tt.repository,
 			}
 			if err := u.Update(tt.args.id, tt.args.param); (err != nil) != tt.wantErr {
-				t.Errorf("Usecase.Update() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("UserUsecase.Update() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
@@ -151,12 +151,12 @@ func TestUsecase_FindByID(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			u := Usecase{
+			u := UserUsecase{
 				repository: tt.fields.repository,
 			}
 			got, err := u.FindByID(tt.args.id)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Usecase.FindByID() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("UserUsecase.FindByID() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
@@ -205,11 +205,11 @@ func TestUsecase_DeleteByID(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			u := Usecase{
+			u := UserUsecase{
 				repository: tt.fields.repository,
 			}
 			if err := u.DeleteByID(tt.args.id); (err != nil) != tt.wantErr {
-				t.Errorf("Usecase.DeleteByID() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("UserUsecase.DeleteByID() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}

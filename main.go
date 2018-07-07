@@ -1,19 +1,21 @@
 package main
 
 import (
-	"net/http"
-
-	"github.com/gloryof/go-crud-practice/context/user/web"
+	"github.com/gloryof/go-crud-practice/crud/config"
+	"github.com/gloryof/go-crud-practice/crud/config/router"
+	"github.com/gloryof/go-crud-practice/crud/externals"
+	"github.com/labstack/echo"
 )
 
 func main() {
-	server := http.Server{
-		Addr: ":8000",
-	}
 
-	welcomeHandler := handlers.WelcomeHandler{}
+	e := echo.New()
+	e.Renderer = config.CreateTemplate()
+	ctx := externals.CreateContext()
+	defer ctx.Close()
 
-	http.Handle("/welcome", &welcomeHandler)
+	ug := e.Group("/user")
+	router.User(ctx, ug)
 
-	server.ListenAndServe()
+	e.Start(":8000")
 }

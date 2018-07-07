@@ -13,6 +13,14 @@ type RepositoryDBImpl struct {
 	userDao tables.UsersDao
 }
 
+// NewRepositoryDBImpl RepositoryのDB実装を生成する
+func NewRepositoryDBImpl(userDao tables.UsersDao) RepositoryDBImpl {
+
+	return RepositoryDBImpl{
+		userDao: userDao,
+	}
+}
+
 // FindAll Repositoryの内部モック実装
 func (r RepositoryDBImpl) FindAll() ([]domain.User, error) {
 
