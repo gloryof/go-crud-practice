@@ -1,0 +1,30 @@
+{{define "user/list"}}
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>ユーザ一覧</title>
+    </head>
+    <body>
+        <main>
+            <h2>テスト</h2>
+            <ul>
+                {{range $i, $u := .Users}}
+                <li>
+                    <dl>
+                        <dt>ID</dt>
+                        <dd>{{$u.ID}}</dd>
+                        <dt>Name</dt>
+                        <dd>{{$u.Name}}</dd>
+                        <dt>BirthDay</dt>
+                        <dd>{{$u.BirthDay}}</dd>
+                    </dl>
+                </li>
+                {{end}}
+            </ul>
+        </main>
+    </body>
+</html>
+{{end}}

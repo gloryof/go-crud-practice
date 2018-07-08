@@ -45,5 +45,5 @@ func (u UserList) ViewAll(c echo.Context) error {
 		Users: us,
 	}
 
-	return c.Render(http.StatusOK, "/users/list.html", view)
+	return c.Render(http.StatusOK, "user/list", view)
 }

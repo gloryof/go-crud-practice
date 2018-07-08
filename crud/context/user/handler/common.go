@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"time"
-
 	"github.com/gloryof/go-crud-practice/crud/context/user/domain"
 )
 
@@ -16,7 +14,7 @@ type UserInfo struct {
 	Name string
 
 	// BirthDay 誕生日
-	BirthDay time.Time
+	BirthDay string
 }
 
 // mapToUserInfo ユーザエンティティをユーザ情報に変換する
@@ -24,6 +22,6 @@ func mapToUserInfo(user domain.User) UserInfo {
 	return UserInfo{
 		ID:       user.GetID().GetValue(),
 		Name:     user.GetName().GetValue(),
-		BirthDay: user.GetBirthDay().GetValue(),
+		BirthDay: user.GetBirthDay().GetValue().Format("2006-01-02"),
 	}
 }

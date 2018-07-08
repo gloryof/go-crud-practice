@@ -16,11 +16,11 @@ type Template struct {
 func CreateTemplate() Template {
 
 	return Template{
-		templates: template.Must(template.ParseGlob("crud/views/*.html")),
+		templates: template.Must(template.ParseGlob("crud/views/**/*.html")),
 	}
 }
 
 // Render レンダリング処理（echo.Rendererの実装）
-func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
+func (t Template) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
 	return t.templates.ExecuteTemplate(w, name, data)
 }
