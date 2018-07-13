@@ -11,8 +11,27 @@ import (
 
 func main() {
 
+	e := createEcho()
+
+	ctx := createExternalsContext()
+	defer ctx.Close()
+
+	route(e, ctx)
+
+	start(e)
+}
+
+func createEcho() *echo.Echo {
+
 	e := echo.New()
-	e.Renderer = config.CreateTemplate()
+	config.SetUpTemplate(e)
+	config.SetUpStaticFile(e)
+
+	return e
+}
+
+func createExternalsContext() externals.Context {
+
 	ctx, err := externals.CreateContext()
 
 	if err != nil {
@@ -20,10 +39,17 @@ func main() {
 		fmt.Printf("Error!: %s", err)
 	}
 
-	defer ctx.Close()
+	return ctx
+}
+
+func route(e *echo.Echo, ctx externals.Context) {
 
 	ug := e.Group("/user")
 	router.User(ctx, ug)
+
+}
+
+func start(e *echo.Echo) {
 
 	e.Start(":8000")
 }

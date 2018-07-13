@@ -12,10 +12,10 @@ type Template struct {
 	templates *template.Template
 }
 
-// CreateTemplate テンプレートエンジンの値を作成する
-func CreateTemplate() Template {
+// SetUpTemplate テンプレートエンジンの設定を行う
+func SetUpTemplate(e *echo.Echo) {
 
-	return Template{
+	e.Renderer = Template{
 		templates: template.Must(template.ParseGlob("crud/views/**/*.html")),
 	}
 }
