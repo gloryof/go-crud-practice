@@ -1,8 +1,8 @@
 package main
 
 import (
+	"errors"
 	"flag"
-	"fmt"
 	"os"
 	"strings"
 
@@ -10,6 +10,7 @@ import (
 	"github.com/gloryof/go-crud-practice/crud/config/router"
 	"github.com/gloryof/go-crud-practice/crud/externals"
 	"github.com/labstack/echo"
+	"github.com/labstack/gommon/log"
 )
 
 var (
@@ -22,13 +23,18 @@ func main() {
 
 	flag.Parse()
 
-	c := loadParameter()
+	c, ce := loadParameter()
+	if ce != nil {
+
+		handleError(ce)
+	}
+
 	e := createEcho()
 
 	ctx, err := createExternalsContext(c)
 	if err != nil {
 
-		os.Exit(1)
+		handleError(err)
 	}
 
 	defer ctx.Close()
@@ -53,7 +59,7 @@ func createExternalsContext(p config.CrudParameter) (externals.Context, error) {
 
 	if ce != nil {
 
-		return externals.Context{}, fmt.Errorf("Error!: %s", ce)
+		return externals.Context{}, ce
 	}
 
 	ctx, cte := externals.CreateContext(c)
@@ -61,7 +67,7 @@ func createExternalsContext(p config.CrudParameter) (externals.Context, error) {
 	if cte != nil {
 
 		ctx.Close()
-		return externals.Context{}, fmt.Errorf("Error!: %s", cte)
+		return externals.Context{}, cte
 	}
 
 	return ctx, nil
@@ -79,11 +85,18 @@ func start(e *echo.Echo) {
 	e.Start(":8000")
 }
 
-func loadParameter() config.CrudParameter {
+func loadParameter() (config.CrudParameter, error) {
+
+	p := loadBasePath()
+
+	if f, err := os.Stat(p); os.IsNotExist(err) || !f.IsDir() {
+
+		return config.CrudParameter{}, errors.New("設定ファイルのディレクトリが存在しません")
+	}
 
 	return config.CrudParameter{
-		BasePath: loadBasePath(),
-	}
+		BasePath: p,
+	}, nil
 }
 
 func loadBasePath() string {
@@ -95,4 +108,10 @@ func loadBasePath() string {
 	}
 
 	return v + "/"
+}
+
+func handleError(err error) {
+
+	log.Errorf("Error!: %s", err)
+	os.Exit(1)
 }
