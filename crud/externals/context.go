@@ -81,7 +81,6 @@ func initDb(c config.DBConfig) (*gorp.DbMap, error) {
 		log.Fatal(pe)
 		return &gorp.DbMap{}, pe
 	}
-	// construct a gorp DbMap
 
 	dbmap := &gorp.DbMap{Db: db, Dialect: gorp.PostgresDialect{}}
 
