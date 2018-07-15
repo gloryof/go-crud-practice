@@ -2,7 +2,9 @@ package externals
 
 import (
 	"database/sql"
+	"log"
 
+	"github.com/gloryof/go-crud-practice/crud/config"
 	"github.com/go-gorp/gorp"
 
 	// sql/driver内で依存しているためインポート
@@ -16,9 +18,9 @@ type Context struct {
 }
 
 // CreateContext コンテキストを生成する
-func CreateContext() (Context, error) {
+func CreateContext(config config.DBConfig) (Context, error) {
 
-	db, der := createDBContext()
+	db, der := createDBContext(config)
 
 	if der != nil {
 
@@ -43,9 +45,9 @@ type DBContext struct {
 	DBMap *gorp.DbMap
 }
 
-func createDBContext() (DBContext, error) {
+func createDBContext(c config.DBConfig) (DBContext, error) {
 
-	db, er := initDb()
+	db, er := initDb(c)
 
 	if er != nil {
 
@@ -62,16 +64,25 @@ func (c DBContext) close() {
 	c.DBMap.Db.Close()
 }
 
-func initDb() (*gorp.DbMap, error) {
+func initDb(c config.DBConfig) (*gorp.DbMap, error) {
 
-	db, err := sql.Open("postgres", "user=crud-user dbname=go-crud password=crud-user sslmode=disable")
+	db, err := sql.Open("postgres", c.ToDatasourceParameter())
 
 	if err != nil {
 
+		log.Fatal(err)
 		return &gorp.DbMap{}, err
 	}
 
+	pe := db.Ping()
+
+	if pe != nil {
+
+		log.Fatal(pe)
+		return &gorp.DbMap{}, pe
+	}
 	// construct a gorp DbMap
+
 	dbmap := &gorp.DbMap{Db: db, Dialect: gorp.PostgresDialect{}}
 
 	return dbmap, nil
