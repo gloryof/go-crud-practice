@@ -67,6 +67,7 @@ func createEcho(c config.CrudParameter) (*echo.Echo, error) {
 
 func createExternalsContext(p config.CrudParameter) (externals.Context, error) {
 
+	// TODO DBの設定は入れたけどトランザクション制御のテストをしていないので後ほど確認する
 	c, ce := config.LoadDBConfig(p)
 
 	if ce != nil {
