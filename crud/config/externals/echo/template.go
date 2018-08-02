@@ -1,4 +1,4 @@
-package config
+package echo
 
 import (
 	"html/template"
@@ -12,8 +12,8 @@ type Template struct {
 	templates *template.Template
 }
 
-// SetUpTemplate テンプレートエンジンの設定を行う
-func SetUpTemplate(e *echo.Echo) {
+// setUpTemplate テンプレートエンジンの設定を行う
+func setUpTemplate(e *echo.Echo) {
 
 	e.Renderer = Template{
 		templates: template.Must(template.ParseGlob("crud/views/**/*.html")),

@@ -1,24 +1,30 @@
 package config
 
-import (
-	"errors"
-	"io"
-	"os"
+// OutputConsole 出力タイプ：コンソール
+const OutputConsole string = "Console"
 
-	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
-)
+// OutputFile 出力タイプ：ファイル
+const OutputFile string = "File"
 
 // LogConfig ログ設定
 type LogConfig struct {
 	// Access アクセスログ設定
 	Access AccessLogConfig `json:"access"`
+	// Audit 監査ログ設定
+	Audit AuditLogConfig `json:"audit"`
 }
 
 // AccessLogConfig アクセスログ設定
 type AccessLogConfig struct {
 	// Format フォーマット
 	Format string `json:"format"`
+
+	// Ouptu 出力先設定
+	Output LogOutput `json:"output"`
+}
+
+// AuditLogConfig 監査ログ設定
+type AuditLogConfig struct {
 
 	// Ouptu 出力先設定
 	Output LogOutput `json:"output"`
@@ -32,22 +38,8 @@ type LogOutput struct {
 	Path string `json:"path"`
 }
 
-// SetUpLog ログの設定を行う
-func SetUpLog(e *echo.Echo, param CrudParameter) error {
-
-	lc, err := loadLogConfig(param)
-	if err != nil {
-
-		return err
-	}
-
-	e.Use(middleware.LoggerWithConfig(lc))
-
-	return nil
-}
-
-// loadLogConfig ログの設定をロードする
-func loadLogConfig(param CrudParameter) (middleware.LoggerConfig, error) {
+// LoadLogConfig ログの設定をロードする
+func LoadLogConfig(param CrudParameter) (LogConfig, error) {
 
 	u := unmarshaller{}
 	u.readFile(param.BasePath + "log.json")
@@ -57,22 +49,10 @@ func loadLogConfig(param CrudParameter) (middleware.LoggerConfig, error) {
 
 	if u.err != nil {
 
-		return middleware.LoggerConfig{}, u.err
+		return LogConfig{}, u.err
 	}
 
-	w, we := getWriter(lf.Access)
-	if we != nil {
-
-		return middleware.LoggerConfig{}, we
-	}
-
-	lc := middleware.LoggerConfig{
-		Skipper: middleware.DefaultSkipper,
-		Format:  lf.Access.Format,
-		Output:  w,
-	}
-
-	return lc, nil
+	return lf, nil
 }
 
 func defaultLogConfig() LogConfig {
@@ -86,32 +66,10 @@ func defaultLogConfig() LogConfig {
 				Type: "Console",
 			},
 		},
-	}
-}
-
-func getWriter(config AccessLogConfig) (io.Writer, error) {
-
-	switch config.Output.Type {
-	case "Console":
-		return os.Stdout, nil
-	case "File":
-
-		if f, err := os.Stat(config.Output.Path); os.IsNotExist(err) || !f.IsDir() {
-
-			return os.Stderr, errors.New("ログのディレクトリが存在しません。[Path:" + config.Output.Path + "]")
-		}
-
-		logPath := config.Output.Path + "/access.log"
-		file, fe := os.OpenFile(logPath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-
-		if fe != nil {
-
-			return os.Stderr, errors.New("ログファイルのオープンに失敗しました。[Path:" + logPath + "]")
-		}
-
-		return file, nil
-	default:
-		return os.Stderr, errors.New("Typeに不正な値が入力されました。")
-
+		Audit: AuditLogConfig{
+			Output: LogOutput{
+				Type: "Console",
+			},
+		},
 	}
 }

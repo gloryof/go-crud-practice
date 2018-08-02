@@ -44,3 +44,7 @@
 [[constraint]]
   branch = "master"
   name = "github.com/lib/pq"
+
+[[constraint]]
+  name = "go.uber.org/zap"
+  version = "1.9.0"

@@ -5,5 +5,11 @@
             "type": "File",
             "path": "/var/log/crud/access"
         }    
+    },
+    "audit": {
+        "output": {
+            "type": "File",
+            "path": "/var/log/crud/audit"
+        }
     }
 }

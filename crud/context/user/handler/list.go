@@ -9,11 +9,11 @@ import (
 
 // UserList ユーザ一覧
 type UserList struct {
-	usecase usecase.UserUsecase
+	usecase *usecase.SearchUser
 }
 
 // NewUserList ユーザ一覧の作成
-func NewUserList(usecase usecase.UserUsecase) UserList {
+func NewUserList(usecase *usecase.SearchUser) UserList {
 
 	return UserList{
 		usecase: usecase,

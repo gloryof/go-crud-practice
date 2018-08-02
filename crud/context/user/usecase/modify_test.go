@@ -56,7 +56,7 @@ func TestUsecase_Register(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			u := UserUsecase{
+			u := ModifyUser{
 				repository: tt.repository,
 			}
 			got, err := u.Register(tt.args.param)
@@ -100,67 +100,11 @@ func TestUsecase_Update(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			u := &UserUsecase{
+			u := ModifyUser{
 				repository: tt.repository,
 			}
 			if err := u.Update(tt.args.id, tt.args.param); (err != nil) != tt.wantErr {
 				t.Errorf("UserUsecase.Update() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
-}
-
-func TestUsecase_FindByID(t *testing.T) {
-	mockCtrl := gomock.NewController(t)
-	defer mockCtrl.Finish()
-
-	var idv uint64 = 1000
-	eu := createTestExistUser(1000, "テスト", "1986-12-16")
-
-	type fields struct {
-		repository domain.Repository
-	}
-	type args struct {
-		id uint64
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    domain.User
-		wantErr bool
-	}{
-		{
-			name: "正常系",
-			fields: fields{
-				repository: createFindMock(mockCtrl, idv, eu),
-			},
-			args:    args{id: idv},
-			want:    eu,
-			wantErr: false,
-		},
-		{
-			name: "エラー系",
-			fields: fields{
-				repository: createFindErrorMock(mockCtrl, idv),
-			},
-			args:    args{id: idv},
-			want:    domain.User{},
-			wantErr: true,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			u := UserUsecase{
-				repository: tt.fields.repository,
-			}
-			got, err := u.FindByID(tt.args.id)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("UserUsecase.FindByID() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Usecase.FindByID() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -205,7 +149,7 @@ func TestUsecase_DeleteByID(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			u := UserUsecase{
+			u := ModifyUser{
 				repository: tt.fields.repository,
 			}
 			if err := u.DeleteByID(tt.args.id); (err != nil) != tt.wantErr {
@@ -246,24 +190,20 @@ func createUpdateMock(mockCtrl *gomock.Controller, base domain.User, updated dom
 	return mr
 }
 
-func createFindMock(mockCtrl *gomock.Controller, id uint64, base domain.User) *domain_mock.MockRepository {
+func createTestNewUser(name string, birthDay string) domain.User {
 
-	mr := domain_mock.NewMockRepository(mockCtrl)
-	uid := domain.NewID(1000)
+	nv, _ := domain.NewName(name)
+	bv, _ := domain.NewBirthDay(birthDay)
 
-	mr.EXPECT().FindByID(uid).Return(base, nil)
-
-	return mr
+	return domain.NewUser(domain.ID{}, nv, bv)
 }
 
-func createFindErrorMock(mockCtrl *gomock.Controller, id uint64) *domain_mock.MockRepository {
+func createTestExistUser(id uint64, name string, birthDay string) domain.User {
 
-	mr := domain_mock.NewMockRepository(mockCtrl)
-	uid := domain.NewID(1000)
+	nv, _ := domain.NewName(name)
+	bv, _ := domain.NewBirthDay(birthDay)
 
-	mr.EXPECT().FindByID(uid).Return(domain.User{}, errors.New("Test"))
-
-	return mr
+	return domain.CreateExistUser(domain.NewID(id), nv, bv)
 }
 
 func createDeleteMock(mockCtrl *gomock.Controller, id uint64) *domain_mock.MockRepository {
@@ -284,20 +224,4 @@ func createDeleteErrorMock(mockCtrl *gomock.Controller, id uint64) *domain_mock.
 	mr.EXPECT().DeleteByID(uid).Return(errors.New("Test"))
 
 	return mr
-}
-
-func createTestNewUser(name string, birthDay string) domain.User {
-
-	nv, _ := domain.NewName(name)
-	bv, _ := domain.NewBirthDay(birthDay)
-
-	return domain.NewUser(domain.ID{}, nv, bv)
-}
-
-func createTestExistUser(id uint64, name string, birthDay string) domain.User {
-
-	nv, _ := domain.NewName(name)
-	bv, _ := domain.NewBirthDay(birthDay)
-
-	return domain.CreateExistUser(domain.NewID(id), nv, bv)
 }

@@ -7,10 +7,9 @@ import (
 	"strings"
 
 	"github.com/gloryof/go-crud-practice/crud/config"
-	"github.com/gloryof/go-crud-practice/crud/config/router"
-	"github.com/gloryof/go-crud-practice/crud/externals"
-	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
+	"github.com/gloryof/go-crud-practice/crud/config/externals"
+	"github.com/gloryof/go-crud-practice/crud/config/externals/echo"
+	"github.com/gloryof/go-crud-practice/crud/config/registry"
 	"github.com/labstack/gommon/log"
 )
 
@@ -24,19 +23,26 @@ func main() {
 
 	flag.Parse()
 
-	c, ce := loadParameter()
-	if ce != nil {
+	p, pe := loadParameter()
+	if pe != nil {
 
-		handleError(ce)
+		handleError(pe)
 	}
 
-	e, ee := createEcho(c)
-	if ee != nil {
+	lc, le := config.LoadLogConfig(p)
+	if le != nil {
 
-		handleError(ee)
+		handleError(le)
 	}
 
-	ctx, err := createExternalsContext(c)
+	// TODO DBの設定は入れたけどトランザクション制御のテストをしていないので後ほど確認する
+	dc, de := config.LoadDBConfig(p)
+	if de != nil {
+
+		handleError(de)
+	}
+
+	ctx, err := externals.CreateContext(dc)
 	if err != nil {
 
 		handleError(err)
@@ -44,58 +50,18 @@ func main() {
 
 	defer ctx.Close()
 
-	route(e, ctx)
+	rr, re := registry.Register(lc, ctx)
+	if re != nil {
 
-	start(e)
-}
-
-func createEcho(c config.CrudParameter) (*echo.Echo, error) {
-
-	e := echo.New()
-	e.Use(middleware.RequestID())
-
-	if err := config.SetUpLog(e, c); err != nil {
-
-		return nil, err
+		handleError(re)
 	}
 
-	config.SetUpTemplate(e)
-	config.SetUpStaticFile(e)
+	e, ee := echo.CreateEcho(lc, &rr)
+	if ee != nil {
 
-	return e, nil
-}
-
-func createExternalsContext(p config.CrudParameter) (externals.Context, error) {
-
-	// TODO DBの設定は入れたけどトランザクション制御のテストをしていないので後ほど確認する
-	c, ce := config.LoadDBConfig(p)
-
-	if ce != nil {
-
-		return externals.Context{}, ce
+		handleError(ee)
 	}
-
-	ctx, cte := externals.CreateContext(c)
-
-	if cte != nil {
-
-		ctx.Close()
-		return externals.Context{}, cte
-	}
-
-	return ctx, nil
-}
-
-func route(e *echo.Echo, ctx externals.Context) {
-
-	ug := e.Group("/user")
-	router.User(ctx, ug)
-
-}
-
-func start(e *echo.Echo) {
-
-	e.Start(":8000")
+	echo.Start(e)
 }
 
 func loadParameter() (config.CrudParameter, error) {
