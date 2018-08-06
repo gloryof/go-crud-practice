@@ -1,34 +1,19 @@
-pipeline {
-    agent any
+GOCMD=go
+GOBUILD="$(GOCMD) build"
+GOCLEAN="$(GOCMD) clean"
+GOTEST="$(GOCMD) test"
+GOGET="$(GOCMD) get"
+DEP_VERSION=0.4.1
+DEP_PATH=${GOPATH}/bin/dep
+BINARY_NAME=crud
+BINARY_DIR=bin
 
-    environment {
-        TARGET_GO = tool name: 'Go.1.10.3', type: 'go'
-        GOBIN = "${TARGET_GO}/bin"
-        GOPATH = "${JENKINS_HOME}/jobs/${JOB_NAME}/GOPATH"
-        PATH= "${GOBIN}:$PATH"
-    }
-
-    stages {
-        stage("Prepare") {
-            steps {
-                echo "TARGET_GO:${TARGET_GO}"
-                echo "GOPATH:${GOPATH}"
-                echo "PATH:${PATH}"
-                sh 'go get -u github.com/golang/dep/...'
-            }
-        }
-
-        stage("Checkout") {
-            steps {
-                checkout scm
-            }
-        }
-
-
-        stage('Build') {
-            steps {
-                sh "make"
-            }
-        }
-    }
-}
+all: dependency clean test build
+dependency:
+	dep ensure
+build:
+	./make/script/build.sh ${GOBUILD} ${BINARY_DIR} ${BINARY_NAME}
+test:
+	./make/script/test.sh ${GOTEST}
+clean:
+	./make/script/clean.sh ${GOCLEAN} ${BINARY_DIR}
