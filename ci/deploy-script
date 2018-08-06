@@ -13,9 +13,6 @@ pipeline {
     stages {
         stage("Prepare") {
             steps {
-                echo "TARGET_GO:${TARGET_GO}"
-                echo "GOPATH:${GOPATH}"
-                echo "PATH:${PATH}"
                 sh 'go get -u github.com/golang/dep/...'
             }
         }
