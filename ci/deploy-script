@@ -2,14 +2,18 @@ pipeline {
     agent any
 
     environment {
-        GOROOT = "${root}"
-        GOPATH = "${JENKINS_HOME}/jobs/${JOB_NAME}/builds/${BUILD_ID}/"
-        PATH= "${GOPATH}/bin:$PATH"
+        TARGET_GO = tool name: 'Go.1.10.3', type: 'go'
+        GOPATH = "${JENKINS_HOME}/jobs/${JOB_NAME}/builds/GOPATH"
+        GOBIN = "${GOPATH}/bin"
+        PATH= "$PATH:${GOBIN}:${TARGET_GO}/bin"
     }
 
     stages {
         stage("Prepare") {
             steps {
+                echo "TARGET_GO:${TARGET_GO}"
+                echo "GOPATH:${GOPATH}"
+                echo "PATH:${PATH}"
                 sh 'go get -u github.com/golang/dep/...'
             }
         }
