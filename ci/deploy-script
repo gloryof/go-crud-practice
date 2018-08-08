@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        PROJECT_NAME="go-crud-build"
+        PROJECT_NAME="go-crud-practice"
         TARGET_GO = tool name: 'Go.1.10.3', type: 'go'
         GOPATH = "${JENKINS_HOME}/workspace/${PROJECT_NAME}/GOPATH"
         GOBIN = "${GOPATH}/bin"
