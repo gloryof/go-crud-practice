@@ -2,9 +2,6 @@ GOCMD=go
 GOBUILD="$(GOCMD) build"
 GOCLEAN="$(GOCMD) clean"
 GOTEST="$(GOCMD) test"
-GOGET="$(GOCMD) get"
-DEP_VERSION=0.4.1
-DEP_PATH=${GOPATH}/bin/dep
 BINARY_NAME=crud
 BINARY_DIR=bin
 
