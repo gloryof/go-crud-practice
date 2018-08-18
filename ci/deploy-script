@@ -1,3 +1,7 @@
+/**
+ * Plugins.
+ * @required Config File Provider
+ */
 pipeline {
     agent any
 
@@ -42,8 +46,23 @@ pipeline {
                 dir("${CHECKOUT_DIR}") {
                     sh "make"
                 }
+            }
+        }
 
-                
+        stage('Deploy') {
+            steps {
+                dir("${CHECKOUT_DIR}") {
+                    withCredentials([usernameColonPassword(credentialsId: 'nexus-dev', variable: 'CREDENTIAL')]) {
+                        sh "curl -v -f " \
+                            + "-POST 'http://192.168.1.100:8081/service/rest/v1/components?repository=golang' " \
+                            + "-u ${CREDENTIAL} " \
+                            + "-H 'accept: application/json' " \
+                            + "-H 'Content-Type: multipart/form-data' " \
+                            + "-F 'raw.directory=/go-crud-practice/snapshot/master' " \
+                            + "-F 'raw.asset1=@bin/crud' " \
+                            + "-F 'raw.asset1.filename=crud' "
+                    }
+                }
             }
         }
     }
