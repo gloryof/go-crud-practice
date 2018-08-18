@@ -1,5 +1,6 @@
 /**
  * Plugins.
+ * @required Go Plugin
  * @required Config File Provider
  */
 pipeline {
