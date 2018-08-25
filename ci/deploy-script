@@ -2,6 +2,7 @@
  * Plugins.
  * @required Go Plugin
  * @required Config File Provider
+ * @required Cobertura
  */
 pipeline {
     agent any
@@ -19,6 +20,7 @@ pipeline {
         stage("Prepare") {
             steps {
                 sh 'go get -u github.com/golang/dep/...'
+                sh 'go get -u github.com/t-yuki/gocover-cobertura'
             }
         }
 
@@ -46,6 +48,21 @@ pipeline {
             steps {
                 dir("${CHECKOUT_DIR}") {
                     sh "make"
+                    sh "gocover-cobertura < bin/cover.out > bin/cover.xml"
+
+                    cobertura (
+                        autoUpdateHealth: false,
+                        autoUpdateStability: false,
+                        coberturaReportFile: 'bin/cover.xml',
+                        conditionalCoverageTargets: '70, 0, 0',
+                        failUnhealthy: false,
+                        failUnstable: false,
+                        lineCoverageTargets: '80, 0, 0',
+                        maxNumberOfBuilds: 0,
+                        methodCoverageTargets: '80, 0, 0',
+                        onlyStable: false,
+                        zoomCoverageChart: false
+                    )
                 }
             }
         }
