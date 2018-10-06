@@ -15,10 +15,12 @@ import (
 
 var (
 	paramC = flag.String("c", "./config/development/", "Config base directory")
+	paramS = flag.String("s", "./static/", "Config base directory")
 )
 
 // main 起動処理
 // -c 設定ファイルのディレクトリパス。デフォルトは実行ファイルがあるディレクトリ内のconfigディレクトリ。
+// -s 静的ファイルのルートディレクトリパス。デフォルトはカレントディレクトリ。
 func main() {
 
 	flag.Parse()
@@ -56,7 +58,7 @@ func main() {
 		handleError(re)
 	}
 
-	e, ee := echo.CreateEcho(lc, &rr)
+	e, ee := echo.CreateEcho(p, lc, &rr)
 	if ee != nil {
 
 		handleError(ee)
@@ -73,14 +75,33 @@ func loadParameter() (config.CrudParameter, error) {
 		return config.CrudParameter{}, errors.New("設定ファイルのディレクトリが存在しません[" + p + "]")
 	}
 
+	r := loadStaticRoot()
+
+	if f, err := os.Stat(r); os.IsNotExist(err) || !f.IsDir() {
+
+		return config.CrudParameter{}, errors.New("静的ファイルのルートディレクトリが存在しません[" + r + "]")
+	}
+
 	return config.CrudParameter{
-		BasePath: p,
+		BasePath:            p,
+		StaticRootDirectory: r,
 	}, nil
 }
 
 func loadBasePath() string {
 
 	v := *paramC
+	if strings.HasSuffix(v, "/") {
+
+		return v
+	}
+
+	return v + "/"
+}
+
+func loadStaticRoot() string {
+
+	v := *paramS
 	if strings.HasSuffix(v, "/") {
 
 		return v
