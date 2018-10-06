@@ -16,7 +16,7 @@ type Template struct {
 func setUpTemplate(e *echo.Echo) {
 
 	e.Renderer = Template{
-		templates: template.Must(template.ParseGlob("crud/views/**/*.html")),
+		templates: template.Must(template.ParseGlob("static/views/**/*.html")),
 	}
 }
 
