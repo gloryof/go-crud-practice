@@ -13,10 +13,11 @@ type Template struct {
 }
 
 // setUpTemplate テンプレートエンジンの設定を行う
-func setUpTemplate(e *echo.Echo) {
+// rootPathにはテンプレートエンジンのルートとなるパスを設定する
+func setUpTemplate(rootPath string, e *echo.Echo) {
 
 	e.Renderer = Template{
-		templates: template.Must(template.ParseGlob("static/views/**/*.html")),
+		templates: template.Must(template.ParseGlob(rootPath + "views/**/*.html")),
 	}
 }
 

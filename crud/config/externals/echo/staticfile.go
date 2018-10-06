@@ -5,8 +5,9 @@ import (
 )
 
 // setUpStaticFile 静的ファイルの設定を行う
-func setUpStaticFile(e *echo.Echo) {
+// staticRootには静的ファイルノルートパスを指定する
+func setUpStaticFile(staticRoot string, e *echo.Echo) {
 
-	e.Static("/lib", "./static/lib")
-	e.Static("/index", "./static/index.html")
+	e.Static("/lib", staticRoot+"lib")
+	e.Static("/index", staticRoot+"index.html")
 }

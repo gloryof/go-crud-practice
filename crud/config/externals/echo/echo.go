@@ -8,9 +8,10 @@ import (
 )
 
 // CreateEcho Echoオブジェクトを作成する。
+// crudParamにはアプリのパラメータを設定する
 // logConfはログ設定を渡す。
 // resultには依存性の登録結果を渡す。
-func CreateEcho(logConf config.LogConfig, result *registry.Result) (*echo.Echo, error) {
+func CreateEcho(crudParam config.CrudParameter, logConf config.LogConfig, result *registry.Result) (*echo.Echo, error) {
 
 	e := echo.New()
 	e.Use(middleware.RequestID())
@@ -20,8 +21,8 @@ func CreateEcho(logConf config.LogConfig, result *registry.Result) (*echo.Echo, 
 		return nil, err
 	}
 
-	setUpTemplate(e)
-	setUpStaticFile(e)
+	setUpTemplate(crudParam.StaticRootDirectory, e)
+	setUpStaticFile(crudParam.StaticRootDirectory, e)
 
 	route(e, result)
 
