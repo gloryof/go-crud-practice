@@ -1,0 +1,10 @@
+[Unit]
+Description=Go Crud Application
+After=network.target
+After=local-fs.target
+
+[Install]
+WantedBy = multi-user.target
+
+[Service]
+ExecStart=/usr/lib/go-crud/crud -c=/usr/lib/go-crud/conf -s=/usr/lib/go-crud/static/
