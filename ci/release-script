@@ -1,0 +1,45 @@
+/**
+ * Plugins.
+ * @required SSH Agent
+ */
+
+pipeline {
+    agent any
+
+    stages {
+
+        stage("Download") {
+            steps {
+                sh 'wget http://192.168.1.100:8081/repository/golang/go-crud-practice/snapshot/master/crud'
+                sh 'wget http://192.168.1.100:8081/repository/golang/go-crud-practice/snapshot/master/crud-assets.tar.gz'
+                sh 'tar -zxvf crud-assets.tar.gz'
+            }
+        }
+
+        stage("Stop") {
+            steps {
+                sshagent(['go-app-server']) {
+                    sh 'ssh app@192.168.1.115 sudo systemctl stop go-crud'
+                }
+            }
+        }
+
+        stage("Upload") {
+            steps {
+
+                sshagent(['go-app-server']) {
+                    sh "scp crud app@192.168.1.115:/usr/lib/go-crud"
+                    sh "scp -r static app@192.168.1.115:/usr/lib/go-crud"
+                }
+            }
+        }
+
+        stage("Start") {
+            steps {
+                sshagent(['go-app-server']) {
+                    sh 'ssh app@192.168.1.115 sudo systemctl start go-crud'
+                }
+            }
+        }
+    }
+}

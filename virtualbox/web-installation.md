@@ -11,3 +11,14 @@
 
 # firewall-cmd --reload
 ```
+
+## sudoersの設定
+```
+# vi /etc/sudoers.d/app
+```
+
+設定内容。
+```
+app ALL=(ALL) NOPASSWD: /usr/bin/systemctl start go-crud
+app ALL=(ALL) NOPASSWD: /usr/bin/systemctl stop go-crud
+```
