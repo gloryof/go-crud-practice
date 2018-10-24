@@ -16,6 +16,7 @@ import (
 var (
 	paramC = flag.String("c", "./config/development/", "Config base directory")
 	paramS = flag.String("s", "./static/", "Config base directory")
+	paramP = flag.Int("p", 8000, "Booting port")
 )
 
 // main 起動処理
@@ -63,7 +64,7 @@ func main() {
 
 		handleError(ee)
 	}
-	echo.Start(e)
+	echo.Start(e, *paramP)
 }
 
 func loadParameter() (config.CrudParameter, error) {

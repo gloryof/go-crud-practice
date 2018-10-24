@@ -1,6 +1,8 @@
 package echo
 
 import (
+	"fmt"
+
 	"github.com/gloryof/go-crud-practice/crud/config"
 	"github.com/gloryof/go-crud-practice/crud/config/registry"
 	"github.com/labstack/echo"
@@ -30,9 +32,9 @@ func CreateEcho(crudParam config.CrudParameter, logConf config.LogConfig, result
 }
 
 // Start サーバを起動する
-func Start(e *echo.Echo) {
+func Start(e *echo.Echo, port int) {
 
-	e.Logger.Fatal(e.Start(":8000"))
+	e.Logger.Fatal(e.Start(":" + fmt.Sprint(port)))
 }
 
 // route ルーティングの設定を行う
