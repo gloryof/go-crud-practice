@@ -10,8 +10,9 @@ pipeline {
 
         stage("Download") {
             steps {
-                sh 'wget http://192.168.1.100:8081/repository/golang/go-crud-practice/snapshot/master/crud'
-                sh 'wget http://192.168.1.100:8081/repository/golang/go-crud-practice/snapshot/master/crud-assets.tar.gz'
+                sh 'wget http://192.168.1.100:8081/repository/golang/go-crud-practice/snapshot/master/crud -O crud'
+                sh 'wget http://192.168.1.100:8081/repository/golang/go-crud-practice/snapshot/master/crud-assets.tar.gz -O crud-assets.tar.gz'
+                sh 'rm -rf static'
                 sh 'tar -zxvf crud-assets.tar.gz'
             }
         }
