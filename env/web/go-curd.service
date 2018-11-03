@@ -7,4 +7,6 @@ After=local-fs.target
 WantedBy = multi-user.target
 
 [Service]
-ExecStart=/usr/lib/go-crud/crud -c=/usr/lib/go-crud/conf -s=/usr/lib/go-crud/static/
+ExecStart=/usr/lib/go-crud/crud -c=/usr/lib/go-crud/conf -s=/usr/lib/go-crud/static/ -p=80
+User=app
+AmbientCapabilities=CAP_NET_BIND_SERVICE
