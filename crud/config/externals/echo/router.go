@@ -12,4 +12,6 @@ func routeUser(e *echo.Echo, handlers *registry.UserHandler) {
 
 	ug.GET("/list", handlers.UserList.ViewAll)
 	ug.GET("/detail/:userID", handlers.UserDetail.ViewDetail)
+	ug.GET("/detail/:userID/edit", handlers.UserDetail.ViewEdit)
+	ug.POST("/detail/:userID/edit", handlers.UserDetail.ExecuteUpdating)
 }

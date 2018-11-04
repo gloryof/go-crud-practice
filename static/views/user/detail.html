@@ -15,13 +15,14 @@
             <dl>
                 <dt>ID</dt>
                 <dd>
-                    <a href="/user/{{.User.ID}}/edit">{{.User.ID}}</a>
+                    {{.User.ID}}
                 </dd>
                 <dt>Name</dt>
                 <dd>{{.User.Name}}</dd>
                 <dt>BirthDay</dt>
                 <dd>{{.User.BirthDay}}</dd>
             </dl>
+            <a href="/user/detail/{{.User.ID}}/edit">編集する</a>
         </main>
     </body>
 </html>

@@ -57,7 +57,7 @@ func registerUser(dbmap *gorp.DbMap) UserResult {
 func registerUserHandler(result UserUsecase) UserHandler {
 
 	ul := handler.NewUserList(result.Search)
-	ud := handler.NewUserDetail(result.Search)
+	ud := handler.NewUserDetail(result.Search, result.Modify)
 	return UserHandler{
 		UserList:   &ul,
 		UserDetail: &ud,

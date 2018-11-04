@@ -97,6 +97,17 @@ func TestUsecase_Update(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "入力チェックエラー",
+			repository: createViewOnlyMock(mockCtrl,
+				createTestExistUser(1000, "Before", "1982-01-01"),
+			),
+			args: args{
+				id:    1000,
+				param: ModifyUserParam{Name: "", BirthDay: "1986-12-16"},
+			},
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -186,6 +197,15 @@ func createUpdateMock(mockCtrl *gomock.Controller, base domain.User, updated dom
 
 	mr.EXPECT().FindByID(id).Return(base, nil)
 	mr.EXPECT().Save(updated).Return(updated.GetID(), nil)
+
+	return mr
+}
+func createViewOnlyMock(mockCtrl *gomock.Controller, base domain.User) *domain_mock.MockRepository {
+
+	mr := domain_mock.NewMockRepository(mockCtrl)
+	id := domain.NewID(1000)
+
+	mr.EXPECT().FindByID(id).Return(base, nil)
 
 	return mr
 }

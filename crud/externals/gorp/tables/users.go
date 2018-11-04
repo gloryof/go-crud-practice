@@ -75,7 +75,7 @@ func (dao UsersDaoGorpImpl) SelectByID(id uint64) (Users, bool) {
 // Insert UsersDaoの実装
 func (dao UsersDaoGorpImpl) Insert(user Users) bool {
 
-	err := dao.DBMap.Insert(user)
+	err := dao.DBMap.Insert(&user)
 
 	return err == nil
 }
@@ -83,7 +83,7 @@ func (dao UsersDaoGorpImpl) Insert(user Users) bool {
 // Update UsersDaoの実装
 func (dao UsersDaoGorpImpl) Update(user Users) bool {
 
-	_, err := dao.DBMap.Update(user)
+	_, err := dao.DBMap.Update(&user)
 
 	return err == nil
 }

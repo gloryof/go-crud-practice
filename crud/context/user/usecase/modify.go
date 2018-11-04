@@ -49,7 +49,12 @@ func (u ModifyUser) Update(id uint64, param ModifyUserParam) error {
 		Repository: u.repository,
 	}
 
-	us, _ := sp.Convert()
+	us, ve := sp.Convert()
+
+	if ve != nil {
+
+		return ve
+	}
 
 	_, re := u.repository.Save(us)
 

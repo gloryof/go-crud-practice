@@ -1,0 +1,44 @@
+{{define "user/edit"}}
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link rel="stylesheet" href="/lib/css/common.css">
+        <title>ユーザ編集</title>
+    </head>
+    <body>
+        <main>
+            <h2>ユーザー詳細</h2>
+            <a href="/user/detail/{{.User.ID}}">&lt;&lt;キャンセル</a>
+            {{$el := len .Errors}} {{ if ne $el 0 }}
+            <p class="error">
+                <ul>
+                    {{range $i, $e := .Errors}}
+                        <li>{{$e}}</li>
+                    {{end}}
+                </ul>
+            </p>
+            {{end}}
+            <form method="POST" action="/user/detail/{{.User.ID}}/edit">
+                <dl>
+                    <dt>ID</dt>
+                    <dd>
+                        {{.User.ID}}
+                    </dd>
+                    <dt>Name</dt>
+                    <dd>
+                        <input type="text" name="name" value="{{.User.Name}}">
+                    </dd>
+                    <dt>BirthDay</dt>
+                    <dd>
+                        <input type="text" name="birthDay" value="{{.User.BirthDay}}">
+                    </dd>
+                </dl>
+                <button>確定</button>
+            </form>
+        </main>
+    </body>
+</html>
+{{end}}
