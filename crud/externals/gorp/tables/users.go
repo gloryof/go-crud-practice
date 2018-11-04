@@ -11,9 +11,9 @@ type Users struct {
 	// ID ユーザのID
 	ID uint64 `db:"id, primarykey"`
 	// Name 名前
-	Name string
+	Name string `db:"name"`
 	// BirthDay 誕生日
-	BirthDay time.Time
+	BirthDay time.Time `db:"birthday"`
 }
 
 // UsersDao usersテーブルのDAO
@@ -65,10 +65,11 @@ func (dao UsersDaoGorpImpl) SelectByID(id uint64) (Users, bool) {
 
 	if err != nil {
 
-		return r.(Users), false
+		return Users{}, false
 	}
 
-	return Users{}, true
+	ru := r.(*Users)
+	return *ru, true
 }
 
 // Insert UsersDaoの実装

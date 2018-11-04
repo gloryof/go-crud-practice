@@ -3,8 +3,10 @@ package externals
 import (
 	"database/sql"
 	"log"
+	"os"
 
 	"github.com/gloryof/go-crud-practice/crud/config"
+	"github.com/gloryof/go-crud-practice/crud/externals/gorp/tables"
 	"github.com/go-gorp/gorp"
 	// sql/driver内で依存しているためインポート
 	_ "github.com/lib/pq"
@@ -82,6 +84,9 @@ func initDb(c config.DBConfig) (*gorp.DbMap, error) {
 	}
 
 	dbmap := &gorp.DbMap{Db: db, Dialect: gorp.PostgresDialect{}}
+	dbmap.TraceOn("[gorp]", log.New(os.Stdout, "myapp:", log.Lmicroseconds))
+
+	dbmap.AddTableWithName(tables.Users{}, "users")
 
 	return dbmap, nil
 }

@@ -27,6 +27,8 @@ type UserInfra struct {
 type UserHandler struct {
 	// UserList ユーザ一覧
 	UserList *handler.UserList
+	// UserDetail ユーザ詳細
+	UserDetail *handler.UserDetail
 }
 
 // UserUsecase ユーザのユースケース群
@@ -54,9 +56,11 @@ func registerUser(dbmap *gorp.DbMap) UserResult {
 // registerUserHandler 依存性の登録を行う
 func registerUserHandler(result UserUsecase) UserHandler {
 
-	u := handler.NewUserList(result.Search)
+	ul := handler.NewUserList(result.Search)
+	ud := handler.NewUserDetail(result.Search)
 	return UserHandler{
-		UserList: &u,
+		UserList:   &ul,
+		UserDetail: &ud,
 	}
 }
 

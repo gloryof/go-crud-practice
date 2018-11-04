@@ -11,4 +11,5 @@ func routeUser(e *echo.Echo, handlers *registry.UserHandler) {
 	ug := e.Group("/user")
 
 	ug.GET("/list", handlers.UserList.ViewAll)
+	ug.GET("/detail/:userID", handlers.UserDetail.ViewDetail)
 }

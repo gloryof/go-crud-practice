@@ -5,7 +5,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <link rel="stylesheet" href="/lib/css/list.css">
+        <link rel="stylesheet" href="/lib/css/common.css">
         <title>ユーザ一覧</title>
     </head>
     <body>
@@ -16,7 +16,9 @@
                 <li>
                     <dl>
                         <dt>ID</dt>
-                        <dd>{{$u.ID}}</dd>
+                        <dd>
+                            <a href="detail/{{$u.ID}}">{{$u.ID}}</a>
+                        </dd>
                         <dt>Name</dt>
                         <dd>{{$u.Name}}</dd>
                         <dt>BirthDay</dt>

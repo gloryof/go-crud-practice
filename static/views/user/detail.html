@@ -1,0 +1,28 @@
+{{define "user/detail"}}
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link rel="stylesheet" href="/lib/css/common.css">
+        <title>ユーザ詳細</title>
+    </head>
+    <body>
+        <main>
+            <h2>ユーザー詳細</h2>
+            <a href="/user/list">&lt;&lt;一覧に戻る</a>
+            <dl>
+                <dt>ID</dt>
+                <dd>
+                    <a href="/user/{{.User.ID}}/edit">{{.User.ID}}</a>
+                </dd>
+                <dt>Name</dt>
+                <dd>{{.User.Name}}</dd>
+                <dt>BirthDay</dt>
+                <dd>{{.User.BirthDay}}</dd>
+            </dl>
+        </main>
+    </body>
+</html>
+{{end}}
