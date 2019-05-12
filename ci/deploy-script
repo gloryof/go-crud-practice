@@ -9,7 +9,7 @@ pipeline {
 
     environment {
         PROJECT_NAME="go-crud-practice"
-        TARGET_GO = tool name: 'Go.1.10.3', type: 'go'
+        TARGET_GO = tool name: 'Go 1.12.4', type: 'go'
         GOPATH = "${JENKINS_HOME}/workspace/${env.JOB_NAME}/GOPATH"
         GOBIN = "${GOPATH}/bin"
         CHECKOUT_DIR = "GOPATH/src/github.com/gloryof/${PROJECT_NAME}"
