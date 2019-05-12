@@ -1,7 +1,7 @@
 package echo
 
 import (
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 // setUpStaticFile 静的ファイルの設定を行う

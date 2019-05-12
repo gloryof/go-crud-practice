@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gloryof/go-crud-practice/crud/context/user/usecase"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 // UserList ユーザ一覧

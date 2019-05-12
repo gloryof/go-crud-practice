@@ -2,7 +2,7 @@ package echo
 
 import (
 	"github.com/gloryof/go-crud-practice/crud/config/registry"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 // routeUser ユーザに関するURLのルータ設定を行う

@@ -8,6 +8,7 @@ import (
 	"github.com/gloryof/go-crud-practice/crud/config"
 	"github.com/gloryof/go-crud-practice/crud/externals/gorp/tables"
 	"github.com/go-gorp/gorp"
+
 	// sql/driver内で依存しているためインポート
 	_ "github.com/lib/pq"
 )

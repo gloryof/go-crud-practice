@@ -7,7 +7,7 @@ import (
 
 	"github.com/gloryof/go-crud-practice/crud/context/base"
 	"github.com/gloryof/go-crud-practice/crud/context/user/usecase"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 // UserDetail ユーザ詳細

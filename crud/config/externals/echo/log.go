@@ -7,8 +7,8 @@ import (
 
 	"github.com/gloryof/go-crud-practice/crud/config"
 	"github.com/gloryof/go-crud-practice/crud/config/registry"
-	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 // setUpLog ログの設定を行う
