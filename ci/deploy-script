@@ -14,12 +14,12 @@ pipeline {
         GOBIN = "${GOPATH}/bin"
         CHECKOUT_DIR = "GOPATH/src/github.com/gloryof/${PROJECT_NAME}"
         PATH= "$PATH:${GOBIN}:${TARGET_GO}/bin"
+        GO111MODULE = "on"
     }
 
     stages {
         stage("Prepare") {
             steps {
-                sh 'go get -u github.com/golang/dep/...'
                 sh 'go get -u github.com/t-yuki/gocover-cobertura'
             }
         }
