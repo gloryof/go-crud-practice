@@ -5,9 +5,7 @@ GOTEST="$(GOCMD) test"
 BINARY_NAME=crud
 BINARY_DIR=bin
 
-all: dependency clean test build assets
-dependency:
-	dep ensure
+all: clean test build assets
 build:
 	./make/script/build.sh ${GOBUILD} ${BINARY_DIR} ${BINARY_NAME}
 test:
