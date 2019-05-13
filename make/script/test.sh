@@ -12,4 +12,5 @@ if [ ! -e ${BINARY_DIR} ]; then
     mkdir ${BINARY_DIR}
 fi
 
-${GOTEST} -coverprofile=${BINARY_DIR}/cover.out -coverpkg=${TARGET_DIR} ${TARGET_DIR}
+
+ENV_VARIABLES=GOOS=linux GOARCH=amd64 CGO_ENABLED=0 ${GOTEST} -coverprofile=${BINARY_DIR}/cover.out -coverpkg=${TARGET_DIR} ${TARGET_DIR}
