@@ -18,4 +18,4 @@ echo ${BINARY_DIR}
 echo ${BINARY_NAME}
 
 
-GOOS=linux GOARCH=amd64 CGO_ENABLED=0 ${GOBUILD} -o ${BINARY_DIR}/${BINARY_NAME} -v
+GOOS=linux GOARCH=amd64 CGO_ENABLED=0 ${GOBUILD} -tags netgo -installsuffix netgo  -o ${BINARY_DIR}/${BINARY_NAME} -v
